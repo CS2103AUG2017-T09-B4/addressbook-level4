@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.tag.UniqueTagList;
 
@@ -23,19 +24,23 @@ public class Person implements ReadOnlyPerson {
     private ObjectProperty<Email> email;
     private ObjectProperty<Address> address;
     private ObjectProperty<Remark> remark;
+    private ObjectProperty<FavouriteStatus> favouriteStatus;
+    private SimpleBooleanProperty status;
 
     private ObjectProperty<UniqueTagList> tags;
 
     /**
      * Every field must be present and not null.
      */
-    public Person(Name name, Phone phone, Email email, Address address, Remark remark, Set<Tag> tags) {
+    public Person(Name name, Phone phone, Email email, Address address, Remark remark, FavouriteStatus favouriteStatus, Set<Tag> tags) {
         requireAllNonNull(name, phone, email, address, tags);
         this.name = new SimpleObjectProperty<>(name);
         this.phone = new SimpleObjectProperty<>(phone);
         this.email = new SimpleObjectProperty<>(email);
         this.address = new SimpleObjectProperty<>(address);
         this.remark = new SimpleObjectProperty<>(remark);
+        this.favouriteStatus = new SimpleObjectProperty<>(favouriteStatus);
+        this.status = new SimpleBooleanProperty(favouriteStatus.getStatus());
         // protect internal tags from changes in the arg list
         this.tags = new SimpleObjectProperty<>(new UniqueTagList(tags));
     }
@@ -44,7 +49,7 @@ public class Person implements ReadOnlyPerson {
      * Creates a copy of the given ReadOnlyPerson.
      */
     public Person(ReadOnlyPerson source) {
-        this(source.getName(), source.getPhone(), source.getEmail(), source.getAddress(), source.getRemark(),
+        this(source.getName(), source.getPhone(), source.getEmail(), source.getAddress(), source.getRemark(), source.getFavouriteStatus(),
                 source.getTags());
     }
 
@@ -103,7 +108,7 @@ public class Person implements ReadOnlyPerson {
     public Address getAddress() {
         return address.get();
     }
-
+    
     public void setRemark(Remark remark) {
         this.remark.set(requireNonNull(remark));
     }
@@ -116,6 +121,30 @@ public class Person implements ReadOnlyPerson {
     @Override
     public Remark getRemark() {
         return remark.get();
+    }
+    
+    public void setFavouriteStatus(FavouriteStatus favouriteStatus) {
+        this.favouriteStatus.set(requireNonNull(favouriteStatus));
+    }
+
+    @Override
+    public ObjectProperty<FavouriteStatus> favouriteStatusProperty() {
+        return favouriteStatus;
+    }
+
+    @Override
+    public FavouriteStatus getFavouriteStatus() {
+        return favouriteStatus.get();
+    }
+
+    @Override
+    public SimpleBooleanProperty statusProperty() {
+        return status;
+    }
+
+    @Override
+    public boolean getStatus() {
+        return status.get();
     }
     /**
      * Returns an immutable tag set, which throws {@code UnsupportedOperationException}
